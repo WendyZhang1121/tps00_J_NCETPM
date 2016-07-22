@@ -1,0 +1,34 @@
+package tps00_J_NCETPM;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+
+final class RequestHandler {
+	private final Helper helper = new Helper(); 
+	private final ServerSocket server;
+	private RequestHandler(int port) throws IOException { 
+		server = new ServerSocket(port);
+	}
+	
+	public static RequestHandler newInstance() throws IOException { 
+		return new RequestHandler(0); // Selects next available port
+	}
+	
+	public void handleRequest() { 
+		new Thread(new Runnable() {
+			public void run() { 
+				try {
+					helper.handle(server.accept()); 
+					} catch (IOException e) {
+						// Forward to handler 
+						}
+				}
+		}).start();
+	} 	
+	
+	public void main(String[] args) { 
+		for (int i = 0; i < 5; i++) {
+			handleRequest();
+		}
+	}
+}
